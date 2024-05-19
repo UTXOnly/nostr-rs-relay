@@ -190,6 +190,7 @@ pub struct Settings {
     pub retention: Retention,
     pub options: Options,
     pub logging: Logging,
+    pub allowed_keywords: Vec<String>,
 }
 
 impl Settings {
@@ -309,7 +310,7 @@ impl Default for Settings {
                 event_persist_buffer: 4096,
                 event_kind_blacklist: None,
                 event_kind_allowlist: None,
-                limit_scrapers: false
+                limit_scrapers: false,
             },
             authorization: Authorization {
                 pubkey_whitelist: None, // Allow any address to publish
@@ -351,6 +352,7 @@ impl Default for Settings {
                 folder_path: None,
                 file_prefix: None,
             },
+            allowed_keywords: vec![], // Default to an empty list
         }
     }
 }

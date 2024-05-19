@@ -242,3 +242,6 @@ limit_scrapers = false
 
 # optional if `direct_message=false`
 #secret_key = "<nostr nsec>"
+
+[allowed_keywords]
+keywords = ["nostr", "dev", "nips"]
