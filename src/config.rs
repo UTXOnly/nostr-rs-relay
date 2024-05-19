@@ -1,8 +1,7 @@
-//! Configuration file and settings management
-use crate::payment::Processor;
 use config::{Config, ConfigError, File};
 use serde::{Deserialize, Serialize};
 use std::time::Duration;
+use crate::payment::Processor;
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 #[allow(unused)]
@@ -177,6 +176,12 @@ pub struct Logging {
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[allow(unused)]
+pub struct AllowedKeywords {
+    pub keywords: Vec<String>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[allow(unused)]
 pub struct Settings {
     pub info: Info,
     pub diagnostics: Diagnostics,
@@ -190,7 +195,7 @@ pub struct Settings {
     pub retention: Retention,
     pub options: Options,
     pub logging: Logging,
-    pub allowed_keywords: Vec<String>,
+    pub allowed_keywords: AllowedKeywords,
 }
 
 impl Settings {
@@ -352,7 +357,9 @@ impl Default for Settings {
                 folder_path: None,
                 file_prefix: None,
             },
-            allowed_keywords: vec![], // Default to an empty list
+            allowed_keywords: AllowedKeywords {
+                keywords: vec![], // Default to an empty list
+            },
         }
     }
 }

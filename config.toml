@@ -25,7 +25,7 @@ description = "A newly created nostr-rs-relay.\n\nCustomize this with your own i
 
 [diagnostics]
 # Enable tokio tracing (for use with tokio-console)
-#tracing = false
+#tracing = true
 
 [database]
 # Database engine (sqlite/postgres).  Defaults to sqlite.
@@ -62,8 +62,8 @@ description = "A newly created nostr-rs-relay.\n\nCustomize this with your own i
 
 [logging]
 # Directory to store log files.  Log files roll over daily.
-#folder_path = "./log"
-#file_prefix = "nostr-relay"
+folder_path = "/usr/src/app/log"
+file_prefix = "nostr-relay"
 
 [grpc]
 # gRPC interfaces for externalized decisions and other extensions to

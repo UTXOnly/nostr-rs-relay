@@ -1,5 +1,4 @@
-//! Event persistence and querying
-use crate::config::Settings;
+use crate::config::{Settings, AllowedKeywords};
 use crate::error::{Error, Result};
 use crate::event::Event;
 use crate::nauthz;
@@ -19,7 +18,6 @@ use sqlx::pool::PoolOptions;
 use sqlx::postgres::PgConnectOptions;
 use sqlx::ConnectOptions;
 use std::sync::Arc;
-use std::thread;
 use std::time::{Duration, Instant};
 use tracing::{debug, info, trace, warn};
 
@@ -110,14 +108,12 @@ pub async fn db_writer(
 ) -> Result<()> {
     // are we performing NIP-05 checking?
     let nip05_active = settings.verified_users.is_active();
-    // are we requriing NIP-05 user verification?
+    // are we requiring NIP-05 user verification?
     let nip05_enabled = settings.verified_users.is_enabled();
 
     let pay_to_relay_enabled = settings.pay_to_relay.enabled;
     let cost_per_event = settings.pay_to_relay.cost_per_event;
     debug!("Pay to relay: {}", pay_to_relay_enabled);
-
-    //upgrade_db(&mut pool.get()?)?;
 
     // Make a copy of the whitelist
     let whitelist = &settings.authorization.pubkey_whitelist.clone();
@@ -141,10 +137,6 @@ pub async fn db_writer(
     } else {
         None
     };
-
-    //let gprc_client = settings.grpc.event_admission_server.map(|s| {
-    //        event_admitter_connect(&s);
-    //    });
 
     loop {
         if shutdown.try_recv().is_ok() {
@@ -196,6 +188,25 @@ pub async fn db_writer(
             }
         }
 
+        // Check if the event content contains any allowed keywords
+        let content = event.content.clone();
+        let allowed_keywords = &settings.allowed_keywords.keywords;
+        let contains_keyword = allowed_keywords.iter().any(|word| content.contains(word));
+        debug!("Checking content for allowed keywords: {:?}", allowed_keywords);
+        debug!("Event content: {}", content);
+        debug!("Contains allowed keyword: {}", contains_keyword);
+        if !contains_keyword {
+            debug!(
+                "rejecting event: {}, no allowed keywords found in content. Event content: {}",
+                &event.get_event_id_prefix(),
+                &content
+            );
+            notice_tx
+                .try_send(Notice::blocked(event.id, "event content does not contain allowed keywords"))
+                .ok();
+            continue;
+        }
+
         // Set to none until balance is got from db
         // Will stay none if user in whitelisted and does not have to pay to post
         // When pay to relay is enabled the whitelist is not a list of who can post
@@ -233,7 +244,7 @@ pub async fn db_writer(
                             debug!("user: {}, is not admitted", &event.pubkey);
 
                             // If the user is in DB but not admitted
-                            // Send meeage to payment thread to check if outstanding invoice has been paid
+                            // Send message to payment thread to check if outstanding invoice has been paid
                             payment_tx
                                 .send(PaymentMessage::CheckAccount(event.pubkey))
                                 .ok();
@@ -435,7 +446,7 @@ pub async fn db_writer(
 
         // use rate limit, if defined, and if an event was actually written.
         if event_write {
-            // If pay to relay is diabaled or the cost per event is 0
+            // If pay to relay is disabled or the cost per event is 0
             // No need to update user balance
             if pay_to_relay_enabled && cost_per_event > 0 {
                 // If the user balance is some, user was not on whitelist
@@ -461,7 +472,7 @@ pub async fn db_writer(
                         most_recent_rate_limit = Instant::now();
                     }
                     // block event writes, allowing them to queue up
-                    thread::sleep(wait_for);
+                    std::thread::sleep(wait_for);
                     continue;
                 }
             }

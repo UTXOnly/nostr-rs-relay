@@ -1,4 +1,3 @@
-//! Server process
 use clap::Parser;
 use console_subscriber::ConsoleLayer;
 use nostr_rs_relay::cli::CLIArgs;
@@ -14,7 +13,7 @@ use std::thread;
 use tikv_jemallocator::Jemalloc;
 use tracing::info;
 use tracing_appender::non_blocking::WorkerGuard;
-use tracing_subscriber::EnvFilter;
+use tracing_subscriber::{EnvFilter, fmt};
 
 #[cfg(not(target_env = "msvc"))]
 #[global_allocator]
@@ -71,7 +70,7 @@ fn main() {
             };
             let file_appender = tracing_appender::rolling::daily(path, prefix);
             let (non_blocking, guard) = tracing_appender::non_blocking(file_appender);
-            let filter = EnvFilter::from_default_env();
+            let filter = EnvFilter::from_default_env().add_directive("debug".parse().unwrap());
             // assign to a variable that is not dropped till the program ends
             _log_guard = Some(guard);
 
@@ -82,7 +81,10 @@ fn main() {
                 .unwrap();
         } else {
             // write to stdout
-            tracing_subscriber::fmt::try_init().unwrap();
+            tracing_subscriber::fmt()
+                .with_env_filter(EnvFilter::from_default_env().add_directive("debug".parse().unwrap()))
+                .try_init()
+                .unwrap();
         }
     }
     info!("Starting up from main");
