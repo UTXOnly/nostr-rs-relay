@@ -25,7 +25,7 @@ description = "A newly created nostr-rs-relay.\n\nCustomize this with your own i
 
 [diagnostics]
 # Enable tokio tracing (for use with tokio-console)
-#tracing = true
+#tracing = flase
 
 [database]
 # Database engine (sqlite/postgres).  Defaults to sqlite.

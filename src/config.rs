@@ -1,7 +1,9 @@
+//! Configuration file and settings management
+use crate::payment::Processor;
 use config::{Config, ConfigError, File};
 use serde::{Deserialize, Serialize};
 use std::time::Duration;
-use crate::payment::Processor;
+
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 #[allow(unused)]
