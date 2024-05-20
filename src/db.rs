@@ -1,4 +1,4 @@
-use crate::config::{Settings, AllowedKeywords};
+use crate::config::Settings;
 use crate::error::{Error, Result};
 use crate::event::Event;
 use crate::nauthz;
@@ -18,6 +18,7 @@ use sqlx::pool::PoolOptions;
 use sqlx::postgres::PgConnectOptions;
 use sqlx::ConnectOptions;
 use std::sync::Arc;
+use std::thread;
 use std::time::{Duration, Instant};
 use tracing::{debug, info, trace, warn};
 
@@ -192,9 +193,6 @@ pub async fn db_writer(
         let content = event.content.clone();
         let allowed_keywords = &settings.allowed_keywords.keywords;
         let contains_keyword = allowed_keywords.iter().any(|word| content.contains(word));
-        debug!("Checking content for allowed keywords: {:?}", allowed_keywords);
-        debug!("Event content: {}", content);
-        debug!("Contains allowed keyword: {}", contains_keyword);
         if !contains_keyword {
             debug!(
                 "rejecting event: {}, no allowed keywords found in content. Event content: {}",
@@ -472,7 +470,7 @@ pub async fn db_writer(
                         most_recent_rate_limit = Instant::now();
                     }
                     // block event writes, allowing them to queue up
-                    std::thread::sleep(wait_for);
+                    thread::sleep(wait_for);
                     continue;
                 }
             }

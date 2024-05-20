@@ -315,7 +315,7 @@ impl Default for Settings {
                 event_persist_buffer: 4096,
                 event_kind_blacklist: None,
                 event_kind_allowlist: None,
-                limit_scrapers: false,
+                limit_scrapers: false
             },
             authorization: Authorization {
                 pubkey_whitelist: None, // Allow any address to publish
