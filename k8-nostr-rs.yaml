@@ -1,0 +1,53 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nostr-relay
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: nostr-relay
+  template:
+    metadata:
+      labels:
+        app: nostr-relay
+    spec:
+      containers:
+      - name: nostr-relay
+        image: bhartford419/nostr-rs-relay:check_kind
+        ports:
+        - containerPort: 8080
+        volumeMounts:
+        - name: data
+          mountPath: /usr/src/app/db
+        - name: config
+          mountPath: /usr/src/app/config.toml
+          subPath: config.toml
+        - name: logs
+          mountPath: /usr/src/app/log
+        securityContext:
+          runAsUser: 100
+          runAsGroup: 100
+      volumes:
+      - name: data
+        hostPath:
+          path: ./data
+      - name: config
+        hostPath:
+          path: ./config.toml
+      - name: logs
+        hostPath:
+          path: ./logs
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nostr-relay-service
+spec:
+  selector:
+    app: nostr-relay
+  ports:
+  - protocol: TCP
+    port: 8080
+    targetPort: 8080
+  type: LoadBalancer
