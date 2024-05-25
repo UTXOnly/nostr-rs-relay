@@ -188,22 +188,25 @@ pub async fn db_writer(
                 continue;
             }
         }
-
-        // Check if the event content contains any allowed keywords
-        let content = event.content.clone();
-        let allowed_keywords = &settings.allowed_keywords.keywords;
-        let contains_keyword = allowed_keywords.iter().any(|word| content.contains(word));
-        if !contains_keyword {
-            debug!(
-                "rejecting event: {}, no allowed keywords found in content. Event content: {}",
-                &event.get_event_id_prefix(),
-                &content
-            );
-            notice_tx
-                .try_send(Notice::blocked(event.id, "event content does not contain allowed keywords"))
-                .ok();
-            continue;
+        
+        // Check if the event is of kind1 and apply the keyword filter
+        if event.kind == 1 {
+            let content = event.content.clone();
+            let allowed_keywords = &settings.allowed_keywords.keywords;
+            let contains_keyword = allowed_keywords.iter().any(|word| content.contains(word));
+            if !contains_keyword {
+                debug!(
+                    "rejecting event: {}, no allowed keywords found in content. Event content: {}",
+                    &event.get_event_id_prefix(),
+                    &content
+                );
+                notice_tx
+                    .try_send(Notice::blocked(event.id, "event content does not contain allowed keywords"))
+                    .ok();
+                continue;
+            }
         }
+
 
         // Set to none until balance is got from db
         // Will stay none if user in whitelisted and does not have to pay to post
