@@ -2,23 +2,20 @@ version: '3.8'
 
 services:
   nostr-relay:
-    build:
-      context: .
-      dockerfile: Dockerfile
+    image: bhartford419/nostr-rs-relay:hardcode
     user: "100:100"
-    ports:
-      - "8080:8080"
     volumes:
       - ./data:/usr/src/app/db
       - ./config.toml:/usr/src/app/config.toml:ro
-      - ./logs:/usr/src/app/loggit status
+      - ./logs:/usr/src/app/log
     restart: unless-stopped
     deploy:
       mode: replicated
       replicas: 5
       restart_policy:
         condition: on-failure
+      endpoint_mode: vip # Virtual IP for internal load balancing
 
 networks:
-  my-overlay-network:
+  rs-overlay-network:
     external: true
