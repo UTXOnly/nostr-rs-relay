@@ -1,6 +1,7 @@
+
 services:
-  nostr-relay:
-    image: bhartford419/nostr-rs-relay:hardcode
+  nostr-relay-primary:
+    image: bhartford419/nostr-rs-relay:pg_primary
     user: "100:100"
     ports:
       - target: 8080
@@ -11,9 +12,31 @@ services:
       - my-overlay-network
     deploy:
       mode: replicated
-      replicas: 3
+      replicas: 2
       placement:
-        constraints: [node.role == worker]
+        constraints: 
+          - node.role == worker
+          - node.labels.region == useast
+      restart_policy:
+        condition: on-failure
+
+  nostr-relay-secondary:
+    image: bhartford419/nostr-rs-relay:pg_replica
+    user: "100:100"
+    ports:
+      - target: 8080
+        published: 8081
+        protocol: tcp
+        mode: host
+    networks:
+      - my-overlay-network
+    deploy:
+      mode: replicated
+      replicas: 2
+      placement:
+        constraints: 
+          - node.role == worker
+          - node.labels.region == asia
       restart_policy:
         condition: on-failure
 
