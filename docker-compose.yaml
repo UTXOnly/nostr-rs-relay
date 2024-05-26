@@ -9,10 +9,6 @@ services:
         published: 8080
         protocol: tcp
         mode: host
-    volumes:
-      - ./data:/usr/src/app/db
-      - ./config.toml:/usr/src/app/config.toml:ro
-      - ./logs:/usr/src/app/log
     networks:
       - my-overlay-network
     deploy:
@@ -26,7 +22,7 @@ services:
   nginx-certbot:
     image: bhartford419/nginx-certbot:swarm
     environment:
-      - DOMAIN=swarm.serverless-nostr.com
+      - DOMAIN=swarm3.serverless-nostr.com
     ports:
       - target: 80
         published: 80
@@ -36,6 +32,9 @@ services:
         published: 443
         protocol: tcp
         mode: host
+    volumes:
+      - certs:/etc/letsencrypt
+      - certs-data:/var/lib/letsencrypt
     networks:
       - my-overlay-network
     deploy:
@@ -50,3 +49,7 @@ networks:
   my-overlay-network:
     driver: overlay
     attachable: true
+
+volumes:
+  certs:
+  certs-data:
