@@ -14,7 +14,7 @@ services:
     deploy:
       mode: global
       placement:
-        constraints: [node.labels.region == primary]
+        constraints: [node.labels.role == dbprimary]
       restart_policy:
         condition: on-failure
 

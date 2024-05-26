@@ -18,7 +18,7 @@ services:
     deploy:
       mode: global
       placement:
-        constraints: [node.labels.region == replica]
+        constraints: [node.labels.role == replica]
       restart_policy:
         condition: on-failure
 
