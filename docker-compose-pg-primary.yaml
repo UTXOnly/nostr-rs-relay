@@ -1,0 +1,28 @@
+
+services:
+  postgres-primary:
+    image: postgres:latest
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
+    volumes:
+      - pgdata-primary:/var/lib/postgresql/data
+      - ./config_primary_region.conf:/etc/postgresql/postgresql.conf:ro
+    networks:
+      - my-overlay-network
+    deploy:
+      mode: global
+      placement:
+        constraints: [node.labels.region == primary]
+      restart_policy:
+        condition: on-failure
+
+networks:
+  my-overlay-network:
+    driver: overlay
+    attachable: true
+
+volumes:
+  pgdata-primary:
+

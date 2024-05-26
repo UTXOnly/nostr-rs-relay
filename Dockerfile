@@ -25,6 +25,7 @@ FROM docker.io/library/debian:bookworm-slim
 
 ARG APP=/usr/src/app
 ARG APP_DATA=/usr/src/app/db
+COPY ./config.toml /usr/src/app/config.toml
 RUN apt-get update \
     && apt-get install -y ca-certificates tzdata sqlite3 libc6 \
     && rm -rf /var/lib/apt/lists/*

@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   nostr-relay:
     image: bhartford419/nostr-rs-relay:hardcode
@@ -22,7 +20,7 @@ services:
   nginx-certbot:
     image: bhartford419/nginx-certbot:swarm
     environment:
-      - DOMAIN=swarm3.serverless-nostr.com
+      - DOMAIN=${DOMAIN}
     ports:
       - target: 80
         published: 80
@@ -39,7 +37,7 @@ services:
       - my-overlay-network
     deploy:
       mode: replicated
-      replicas: 1
+      replicas: 2
       placement:
         constraints: [node.role == manager]
       restart_policy:
@@ -53,3 +51,4 @@ networks:
 volumes:
   certs:
   certs-data:
+  pgdata:
