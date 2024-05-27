@@ -41,7 +41,7 @@ services:
         condition: on-failure
 
   nginx-primary:
-    image: bhartford419/nginx-certbot:primary_hc
+    image: bhartford419/nginx-certbot:primary_hc_svc
     environment:
       - DOMAIN=rds-swarm.serverless-nostr.com
     ports:
@@ -70,7 +70,7 @@ services:
 
 
   nginx-seconday:
-    image: bhartford419/nginx-certbot:secondary_hc
+    image: bhartford419/nginx-certbot:secondary_hc_svc
     environment:
       - DOMAIN=rds-swarm.serverless-nostr.com
     ports:
@@ -89,7 +89,7 @@ services:
       - my-overlay-network
     deploy:
       mode: replicated
-      replicas: 2
+      replicas: 1
       placement:
         constraints: 
           - node.role == manager
