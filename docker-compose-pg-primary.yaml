@@ -10,6 +10,9 @@ services:
       - source: config_primary_region.conf
         target: /etc/postgresql/postgresql.conf
         mode: 0444
+      - source: config_pg_hba.conf
+        target: /var/lib/postgresql/data/pg_hba.conf
+        mode: 0444
     volumes:
       - pgdata-primary:/var/lib/postgresql/data
     networks:
@@ -37,4 +40,6 @@ volumes:
 
 configs:
   config_primary_region.conf:
+    external: true
+  config_pg_hba.conf:
     external: true
