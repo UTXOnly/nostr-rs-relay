@@ -56,10 +56,6 @@ services:
     volumes:
       - certs:/etc/letsencrypt
       - certs-data:/var/lib/letsencrypt
-    entrypoint: ["/init-certs.sh"]
-    configs:
-      - source: init-certs
-        target: /init-certs.sh
     networks:
       - my-overlay-network
     deploy:
@@ -76,10 +72,6 @@ networks:
     attachable: true
 
 volumes:
-  pgdata:
   certs:
   certs-data:
-
-configs:
-  init-certs:
-    file: ./init-certs.sh
+  pgdata:
