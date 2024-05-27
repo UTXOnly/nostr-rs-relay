@@ -1,7 +1,7 @@
 
 services:
   postgres-primary:
-    image: postgres:latest
+    image: bhartford419/custom-postgres-replica:v4
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
