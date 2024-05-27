@@ -41,7 +41,7 @@ services:
         condition: on-failure
 
   nginx-primary:
-    image: bhartford419/nginx-certbot:primary
+    image: bhartford419/nginx-certbot:primary_hc
     environment:
       - DOMAIN=global2.serverless-nostr.com
     ports:
@@ -70,7 +70,7 @@ services:
 
 
   nginx-seconday:
-    image: bhartford419/nginx-certbot:secondary
+    image: bhartford419/nginx-certbot:secondary_hc
     environment:
       - DOMAIN=global2.serverless-nostr.com
     ports:
