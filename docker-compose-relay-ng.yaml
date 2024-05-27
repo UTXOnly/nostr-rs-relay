@@ -43,7 +43,7 @@ services:
   nginx-certbot:
     image: bhartford419/nginx-certbot:swarm
     environment:
-      - DOMAIN=${DOMAIN}
+      - DOMAIN=global.serverless-nostr.com
     ports:
       - target: 80
         published: 80
