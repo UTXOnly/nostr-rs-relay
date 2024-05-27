@@ -1,7 +1,8 @@
+version: '3.8'
 
 services:
   postgres-replica:
-    image: postgres:latest
+    image: bhartford419/custom-postgres-replica:v1
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
