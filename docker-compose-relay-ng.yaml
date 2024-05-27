@@ -12,7 +12,7 @@ services:
       - my-overlay-network
     deploy:
       mode: replicated
-      replicas: 2
+      replicas: 1
       placement:
         constraints: 
           - node.role == worker
