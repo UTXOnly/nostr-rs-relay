@@ -1,3 +1,4 @@
+version: '3.8'
 
 services:
   nostr-relay-primary:
@@ -53,9 +54,13 @@ services:
         published: 443
         protocol: tcp
         mode: host
-    volumes:
-      - certs:/etc/letsencrypt
-      - certs-data:/var/lib/letsencrypt
+    configs:
+      - source: certs
+        target: /etc/letsencrypt
+        mode: 0444
+      - source: certs-data
+        target: /var/lib/letsencrypt
+        mode: 0444
     networks:
       - my-overlay-network
     deploy:
@@ -72,6 +77,10 @@ networks:
     attachable: true
 
 volumes:
-  certs:
-  certs-data:
   pgdata:
+
+configs:
+  certs:
+    external: true
+  certs-data:
+    external: true
