@@ -1,29 +1,29 @@
+version: '3.8'
 
 services:
-  postgres-replica:
+  postgres-primary:
     image: postgres:latest
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
       - POSTGRES_DB=postgres
-      - PRIMARY_HOST=postgres-primary
-      - PRIMARY_PORT=5432
-      - REPLICATION_USER=postgres
-      - REPLICATION_PASSWORD=postgres
+    configs:
+      - source: config_primary_region.conf
+        target: /etc/postgresql/postgresql.conf
+        mode: 0444
     volumes:
-      - pgdata-secondary:/var/lib/postgresql/data
-      - ./config_secondary_region.conf:/etc/postgresql/postgresql.conf:ro
+      - pgdata-primary:/var/lib/postgresql/data
     networks:
       - my-overlay-network
     ports:
-    - target: 5432
-      published: 5432
-      protocol: tcp
-      mode: host
+      - target: 5432
+        published: 5432
+        protocol: tcp
+        mode: host
     deploy:
       mode: global
       placement:
-        constraints: [node.labels.role == replica]
+        constraints: [node.labels.role == dbprimary]
       restart_policy:
         condition: on-failure
 
@@ -33,4 +33,8 @@ networks:
     attachable: true
 
 volumes:
-  pgdata-secondary:
+  pgdata-primary:
+
+configs:
+  config_primary_region.conf:
+    external: true
