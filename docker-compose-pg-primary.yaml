@@ -11,6 +11,11 @@ services:
       - ./config_primary_region.conf:/etc/postgresql/postgresql.conf:ro
     networks:
       - my-overlay-network
+    ports:
+      - target: 5432
+        published: 5432
+        protocol: tcp
+        mode: host
     deploy:
       mode: global
       placement:
@@ -25,4 +30,5 @@ networks:
 
 volumes:
   pgdata-primary:
+
 
