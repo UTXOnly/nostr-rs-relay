@@ -1,3 +1,4 @@
+version: '3.8'
 
 services:
   nostr-relay-primary:
@@ -25,7 +26,7 @@ services:
     user: "100:100"
     ports:
       - target: 8080
-        published: 8081
+        published: 8080
         protocol: tcp
         mode: host
     networks:
@@ -43,7 +44,7 @@ services:
   nginx-primary:
     image: bhartford419/nginx-certbot:primary_hc
     environment:
-      - DOMAIN=rds-swarm.serverless-nostr.com
+      - DOMAIN=ext.serverless-nostr.com
     ports:
       - target: 80
         published: 80
@@ -67,12 +68,12 @@ services:
           - node.labels.region == useast
       restart_policy:
         condition: on-failure
+        max_attempts: 2
 
-
-  nginx-seconday:
+  nginx-secondary:
     image: bhartford419/nginx-certbot:secondary_hc
     environment:
-      - DOMAIN=rds-swarm.serverless-nostr.com
+      - DOMAIN=ext.serverless-nostr.com
     ports:
       - target: 80
         published: 80
@@ -96,11 +97,13 @@ services:
           - node.labels.region == asia
       restart_policy:
         condition: on-failure
+        max_attempts: 2
 
 networks:
   my-overlay-network:
     driver: overlay
     attachable: true
+    external: true
 
 volumes:
   certs:

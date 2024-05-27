@@ -18,7 +18,7 @@ services:
       - target: 5432
         published: 5432
         protocol: tcp
-        mode: ingress  # Changed from 'host' to 'ingress'
+        mode: host
     deploy:
       mode: global
       placement:
@@ -30,6 +30,7 @@ networks:
   my-overlay-network:
     driver: overlay
     attachable: true
+    external: true
 
 volumes:
   pgdata-primary:
