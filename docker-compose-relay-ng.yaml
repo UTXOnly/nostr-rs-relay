@@ -1,7 +1,7 @@
 
 services:
   nostr-relay-primary:
-    image: bhartford419/nostr-rs-relay:pg_primary
+    image: bhartford419/nostr-rs-relay:primary
     user: "100:100"
     ports:
       - target: 8080
@@ -21,7 +21,7 @@ services:
         condition: on-failure
 
   nostr-relay-secondary:
-    image: bhartford419/nostr-rs-relay:pg_replica
+    image: bhartford419/nostr-rs-relay:replica
     user: "100:100"
     ports:
       - target: 8080
@@ -32,7 +32,7 @@ services:
       - my-overlay-network
     deploy:
       mode: replicated
-      replicas: 2
+      replicas: 1
       placement:
         constraints: 
           - node.role == worker
