@@ -21,7 +21,7 @@ services:
         condition: on-failure
 
   nostr-relay-secondary:
-    image: bhartford419/nostr-rs-relay:replica
+    image: bhartford419/nostr-rs-relay:secondary
     user: "100:100"
     ports:
       - target: 8080
