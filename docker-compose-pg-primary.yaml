@@ -1,4 +1,3 @@
-version: '3.8'
 
 services:
   postgres-primary:
@@ -19,7 +18,7 @@ services:
       - target: 5432
         published: 5432
         protocol: tcp
-        mode: host
+        mode: ingress  # Changed from 'host' to 'ingress'
     deploy:
       mode: global
       placement:
