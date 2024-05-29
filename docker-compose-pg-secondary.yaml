@@ -8,8 +8,8 @@ services:
       - POSTGRES_DB=postgres
       - PRIMARY_HOST=postgres-primary
       - PRIMARY_PORT=5432
-      - REPLICATION_USER=postgres
-      - REPLICATION_PASSWORD=postgres
+      - REPLICATION_USER=replica
+      - REPLICATION_PASSWORD=password
     configs:
       - source: config_secondary_region.conf
         target: /etc/postgresql/postgresql.conf
