@@ -1,10 +1,12 @@
 services:
   datadog-agent:
-    image: gcr.io/datadoghq/agent:latest
+    container_name: datadog-agent
+    image: datadog/agent:latest
     environment:
       - DD_API_KEY=${DD_API_KEY}
       - DD_SITE=datadoghq.com
-      - DD_ENV=swarm
+      - DD_HOSTNAME=${DD_HOSTNAME}
+      - DD_ENV=${DD_ENV}
       - DD_TAGS=owner:nostrich
       - DD_DOGSTATSD_NON_LOCAL_TRAFFIC=true
       - DD_DOCKER_LABELS_AS_TAGS=true
@@ -12,6 +14,7 @@ services:
       - DD_SYSTEM_PROBE_ENABLED=true
       - DD_PROCESS_AGENT_ENABLED=true
       - DD_APM_NON_LOCAL_TRAFFIC=true
+      - DD_AGENT_HOST=host.docker.internal
       - DD_LOGS_ENABLED=true
       - DD_LOGS_CONFIG_CONTAINER_COLLECT_ALL=true
       - DD_CONTAINER_EXCLUDE="image:datadog/agent:latest"
@@ -19,32 +22,11 @@ services:
       - DD_REMOTE_CONFIGURATION_ENABLED=true
       - DD_LOGS_CONFIG_AUTO_MULTI_LINE_DETECTION=true
     volumes:
-      - type: bind
-        source: /var/run/docker.sock
-        target: /var/run/docker.sock
-        read_only: true
-      - type: bind
-        source: /var/lib/docker/containers
-        target: /var/lib/docker/containers
-        read_only: true
-      - type: bind
-        source: /proc
-        target: /host/proc
-        read_only: true
-      - type: bind
-        source: /sys/fs/cgroup
-        target: /host/sys/fs/cgroup
-        read_only: true
-      - type: bind
-        source: /sys/kernel/debug
-        target: /sys/kernel/debug
-      - type: bind
-        source: /etc/passwd
-        target: /etc/passwd
-        read_only: true
-      - type: volume
-        source: datadog-run
-        target: /opt/datadog-agent/run
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /var/lib/docker/containers:/var/lib/docker/containers:ro
+      - /proc/:/host/proc/:ro
+      - /sys/fs/cgroup:/host/sys/fs/cgroup:ro
+      - /sys/kernel/debug:/sys/kernel/debug
     cap_add:
       - SYS_ADMIN
       - SYS_RESOURCE
@@ -56,12 +38,13 @@ services:
       - CHOWN
     security_opt:
       - apparmor:unconfined
+    ports:
+      - "8126:8126"
+      - "8125:8125"
     networks:
       - my-overlay-network
     deploy:
       mode: global
-      restart_policy:
-        condition: on-failure
       resources:
         limits:
           cpus: '0.5'
@@ -70,8 +53,6 @@ services:
           cpus: '0.25'
           memory: 250M
 
-volumes:
-  datadog-run:
 
 networks:
   my-overlay-network:
