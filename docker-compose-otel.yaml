@@ -2,7 +2,6 @@ version: '3.8'
 
 services:
   opentelemetry-collector:
-    container_name: opentelemetry-collector
     image: otel/opentelemetry-collector-contrib:latest
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
