@@ -14,6 +14,9 @@ services:
       - source: config_secondary_region.conf
         target: /etc/postgresql/postgresql.conf
         mode: 0444
+      - source: config_pg_hba.conf
+        target: /var/lib/postgresql/data/pg_hba.conf
+        mode: 0444
     volumes:
       - pgdata-secondary:/var/lib/postgresql/data
     networks:
@@ -42,4 +45,6 @@ volumes:
 
 configs:
   config_secondary_region.conf:
+    external: true
+  config_pg_hba.conf:
     external: true
