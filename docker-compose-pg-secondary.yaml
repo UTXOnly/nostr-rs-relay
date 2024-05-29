@@ -15,7 +15,7 @@ services:
         target: /etc/postgresql/postgresql.conf
         mode: 0444
       - source: config_pg_hba.conf
-        target: /var/lib/postgresql/data/pg_hba.conf
+        target: /etc/postgresql/data/pg_hba.conf
         mode: 0444
     volumes:
       - pgdata-secondary:/var/lib/postgresql/data
