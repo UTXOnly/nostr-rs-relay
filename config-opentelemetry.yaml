@@ -1,0 +1,41 @@
+receivers:
+  hostmetrics:
+    collection_interval: 60s
+    scrapers:
+      cpu:
+      disk:
+      filesystem:
+      memory:
+      network:
+      load:
+      paging:
+      processes:
+      system:
+
+processors:
+  batch:
+  resource:
+    attributes:
+      - key: service.name
+        value: my-service
+        action: upsert
+
+exporters:
+  logging:
+    loglevel: debug
+  datadog:
+    api:
+      key: ${DD_API_KEY}
+    site: ${DD_SITE}
+
+
+service:
+  pipelines:
+    metrics:
+      receivers: [hostmetrics]
+      processors: [batch, resource]
+      exporters: [logging, datadog]
+    traces:
+      receivers: []
+      processors: [batch, resource]
+      exporters: [logging, datadog]
