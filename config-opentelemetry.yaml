@@ -19,23 +19,27 @@ processors:
       - key: service.name
         value: my-service
         action: upsert
+  resourcedetection:
+    detectors: [env, system]
+    system:
+      hostname_sources: [os]
 
 exporters:
   logging:
     loglevel: debug
   datadog:
     api:
-      key: ${DD_API_KEY}
-    site: ${DD_SITE}
-
+      key: "your_hardcoded_datadog_api_key"
+    site: "datadoghq.com"
 
 service:
   pipelines:
     metrics:
       receivers: [hostmetrics]
-      processors: [batch, resource]
+      processors: [batch, resource, resourcedetection]
       exporters: [logging, datadog]
     traces:
       receivers: []
-      processors: [batch, resource]
+      processors: [batch, resource, resourcedetection]
       exporters: [logging, datadog]
+
