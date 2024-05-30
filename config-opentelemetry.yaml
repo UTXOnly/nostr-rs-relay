@@ -17,13 +17,37 @@ receivers:
       container.memory.hierarchical_memory_limit:
         enabled: true
 
+  hostmetrics:
+    collection_interval: 60s
+    scrapers:
+      cpu:
+      disk:
+      filesystem:
+      memory:
+      network:
+      load:
+      paging:
+      processes:
+      system:
+
 processors:
   batch:
     send_batch_max_size: 1000
     send_batch_size: 100
     timeout: 10s
 
+  resource:
+    attributes:
+      - key: service.name
+        value: my-service
+        action: upsert
+
+  resourcedetection:
+    detectors: [system]
+
 exporters:
+  logging:
+    loglevel: debug
   datadog:
     api:
       site: "datadoghq.com"
@@ -32,6 +56,10 @@ exporters:
 service:
   pipelines:
     metrics:
-      receivers: [docker_stats]
-      processors: [batch]
-      exporters: [datadog]
+      receivers: [docker_stats, hostmetrics]
+      processors: [batch, resource, resourcedetection]
+      exporters: [logging, datadog]
+    traces:
+      receivers: []
+      processors: [batch, resource, resourcedetection]
+      exporters: [logging, datadog]
