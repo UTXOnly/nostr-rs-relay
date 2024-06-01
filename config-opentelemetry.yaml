@@ -104,7 +104,7 @@ service:
       processors: [memory_limiter, batch, resourcedetection, attributes]
       exporters: [datadog/connector, datadog/exporter]
     metrics:
-      receivers: [datadog/connector, otlp, hostmetrics, docker_stats]
+      receivers: [datadog/connector, otlp, hostmetrics]
       processors: [memory_limiter, batch, resourcedetection, attributes]
       exporters: [datadog/exporter]
     logs:
