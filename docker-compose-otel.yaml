@@ -14,6 +14,7 @@ services:
       - "4318:4318"
     networks:
       - my-overlay-network
+    command: ["--config=/etc/otel/config.yaml"]
     deploy:
       mode: global
       resources:
