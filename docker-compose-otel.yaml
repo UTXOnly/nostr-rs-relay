@@ -18,7 +18,6 @@ services:
       - 8.8.8.8
       - 8.8.4.4
     command: ["--config=/etc/otel/config.yaml"]
-    privileged: true
     deploy:
       mode: global
       resources:

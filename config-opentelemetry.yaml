@@ -4,23 +4,6 @@ receivers:
       http:
       grpc:
 
-  docker_stats:
-    endpoint: unix:///var/run/docker.sock # (default)
-    metrics:
-      container.network.io.usage.rx_packets:
-        enabled: true
-      container.network.io.usage.tx_packets:
-        enabled: true
-      container.cpu.usage.system:
-        enabled: true
-      container.memory.rss:
-        enabled: true
-      container.blockio.io_serviced_recursive:
-        enabled: true
-      container.uptime:
-        enabled: true
-      container.memory.hierarchical_memory_limit:
-        enabled: true
 
   hostmetrics:
     collection_interval: 10s
