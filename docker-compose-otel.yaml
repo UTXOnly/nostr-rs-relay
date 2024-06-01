@@ -35,4 +35,4 @@ networks:
 
 configs:
   opentelemetry-config:
-    file: ./config-opentelemetry.yaml
+    external: true
